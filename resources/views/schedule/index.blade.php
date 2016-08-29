@@ -35,5 +35,19 @@
                 <input type="text" class="form-control" name="notes" value="{{ $next_week->notes }}" placeholder="Ovdje možeš unijeti napomenu...">
             </form>
         </div>
+
+        @if ($history)
+            <hr>
+
+            <div class="bs-callout bs-callout-default">
+                <h6>Vozili su:</h6>
+
+                <ul>
+                    @foreach ($history as $assignment)
+                        <li>{{ $assignment->year }}/{{ $assignment->week }} {{ $assignment->user->nickname }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </div>
 @stop
