@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Drive\Assignment;
+use App\Drive\AssignmentRepository;
 use App\Drive\DriveGroup;
 use App\Http\Requests;
 use App\Notifications\WhoDrivesNextWeek;
@@ -14,24 +15,34 @@ use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
-    public function index()
-    {
-        $when     = Carbon::now();
-        $history  = Assignment::where('week', '<', $when->weekOfYear)->where('year', '<=', $when->year)->orderBy('year', 'desc')->orderBy('week', 'desc')->limit(10)->get();
-        $thisWeek = Assignment::where('week', $when->weekOfYear)->where('year', $when->year)->first();
-        $nextWeek = Assignment::where('week', $when->addWeeks(1)->weekOfYear)->where('year', $when->year)->first();
+    /**
+     * Assignment repository
+     *
+     * @var AssignmentRepository
+     */
+    protected $assignments;
 
-        return view('schedule.index')->withThisWeek($thisWeek)->withNextWeek($nextWeek)->withHistory($history);
+    /**
+     * Init dependencies
+     *
+     * @param AssignmentRepository $assignments
+     */
+    public function __construct(AssignmentRepository $assignments)
+    {
+        $this->assignments = $assignments;
     }
 
-    public function updateNotes($assignmentId, Request $request)
+    /**
+     * Schedule overview
+     *
+     * @return View
+     */
+    public function index()
     {
-        $assignment = Assignment::find($assignmentId);
+        $schedule = $this->assignments->schedule();
 
-        $assignment->update(['notes' => $request->input('notes')]);
-
-        if ($request->input('notes')) $assignment->group->notify(new AssignmentNotesWereUpdated($assignment));
-
-        return redirect()->route('home');
+        return view('schedule.index')->withThisWeek($schedule->thisWeek)
+                                     ->withNextWeek($schedule->nextWeek)
+                                     ->withHistory($schedule->history);
     }
 }

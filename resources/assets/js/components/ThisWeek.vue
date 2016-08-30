@@ -21,6 +21,7 @@ module.exports = {
         fetchThisWeek: function() {
             $.getJSON('api/schedule/this-week', function(assignment) {
                 this.assignment = assignment;
+                this.listen();
             }.bind(this));
         },
         updateAssignment: function(event) {
@@ -33,6 +34,12 @@ module.exports = {
             );
 
             event.preventDefault();
+        },
+        listen: function() {
+            Echo.channel('assignments.'+this.assignment.id+'.notes')
+                .listen('AssignmentNoteUpdated', function(e) {
+                    this.assignment.notes = e.assignment.notes;
+                }.bind(this));
         }
     },
 

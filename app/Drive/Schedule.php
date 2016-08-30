@@ -8,9 +8,9 @@ use Laravel\Socialite\Two\User as SocialUser;
 
 class Schedule extends EloquentRepository
 {
-    protected $thisWeek;
-    protected $nextWeek;
-    protected $history;
+    public $thisWeek;
+    public $nextWeek;
+    public $history;
     protected $data;
 
     /**

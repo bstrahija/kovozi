@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use Response;
 use App\Drive\AssignmentRepository;
-
 use App\Drive\Assignment;
 use App\Drive\DriveGroup;
 use App\Http\Requests;
 use App\Notifications\WhoDrivesNextWeek;
 use App\Notifications\YouDriveNextWeek;
 use App\Notifications\AssignmentNotesWereUpdated;
+use App\Events\AssignmentNoteUpdated;
 use App\Users\User;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
@@ -18,6 +18,13 @@ use Illuminate\Http\Request;
 
 class ScheduleController extends Controller
 {
+    /**
+     * Assignment repository
+     *
+     * @var AssignmentRepository
+     */
+    protected $assignments;
+
     /**
      * Init dependencies
      *
@@ -85,11 +92,12 @@ class ScheduleController extends Controller
      */
     public function updateNotes($assignmentId, Request $request)
     {
+        // Find assignment and update the data
         $assignment = Assignment::find($assignmentId);
-
         $assignment->update(['notes' => $request->input('notes')]);
 
-        if ($request->input('notes')) $assignment->group->notify(new AssignmentNotesWereUpdated($assignment));
+        // Trigger the event
+        event(new AssignmentNoteUpdated($assignment));
 
         return Response::json($assignment);
     }

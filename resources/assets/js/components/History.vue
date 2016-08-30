@@ -17,6 +17,10 @@ module.exports = {
     },
 
     methods: {
+        /**
+         * Fetch the history from the API
+         * @return {array}
+         */
         fetchHistory: function() {
             $.getJSON('api/schedule/history', function(assignments) {
                 this.assignments = assignments;

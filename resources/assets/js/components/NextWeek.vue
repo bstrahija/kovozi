@@ -6,7 +6,7 @@
             <h6>Slijedeći tjedan vozi:</h6>
             <h3>{{ assignment.user.nickname }}</h3>
 
-            <input type="text" class="form-control" name="notes" value="{{ assignment.notes }}" placeholder="Ovdje možeš unijeti napomenu...">
+            <input type="text" class="form-control" name="notes" v-model="assignment.notes" placeholder="Ovdje možeš unijeti napomenu...">
         </form>
     </div>
 </template>
@@ -21,6 +21,7 @@ module.exports = {
         fetchNextWeek: function() {
             $.getJSON('api/schedule/next-week', function(assignment) {
                 this.assignment = assignment;
+                this.listen();
             }.bind(this));
         },
         updateAssignment: function(event) {
@@ -33,6 +34,12 @@ module.exports = {
             );
 
             event.preventDefault();
+        },
+        listen: function() {
+            Echo.channel('assignments.'+this.assignment.id+'.notes')
+                .listen('AssignmentNoteUpdated', function(e) {
+                    this.assignment.notes = e.assignment.notes;
+                }.bind(this));
         }
     },
 

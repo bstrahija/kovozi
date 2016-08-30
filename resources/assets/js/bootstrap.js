@@ -20,9 +20,19 @@ window.Vue = require('vue');
 require('vue-resource');
 
 /**
- * Alerts
+ * Vendor
  */
 window.Alertify = require('alertify-webpack');
+window.Pusher   = require('pusher-js');
+
+/**
+ * Laravel echo
+ */
+import Echo from "laravel-echo"
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: '3f5b42a103562aa3727d'
+});
 
 /**
  * We'll register a HTTP interceptor to attach the "CSRF" header to each of
