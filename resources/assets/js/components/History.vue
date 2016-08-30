@@ -1,19 +1,33 @@
 <template>
-    <div class="bs-callout bs-callout-default">
+    <div class="bs-callout bs-callout-default" v-if="assignments.length">
         <h6>Vozili su:</h6>
 
         <ul>
-            @foreach ($history as $assignment)
-                <li>{{ $assignment->year }}/{{ $assignment->week }} {{ $assignment->user->nickname }}</li>
-            @endforeach
+            <li v-for="assignment in assignments">
+                {{ assignment.year }}/{{ assignment.week }} {{ assignment.user.nickname }}
+            </li>
         </ul>
     </div>
 </template>
 
 <script>
-    export default {
-        ready() {
-            console.log('HISTORY Component ready.')
+module.exports = {
+    created: function() {
+        this.fetchHistory();
+    },
+
+    methods: {
+        fetchHistory: function() {
+            $.getJSON('api/schedule/history', function(assignments) {
+                this.assignments = assignments;
+            }.bind(this));
+        }
+    },
+
+    data: function() {
+        return {
+            assignments: []
         }
     }
+}
 </script>

@@ -1,24 +1,45 @@
 <template>
-    <div class="bs-callout bs-callout-success">
-        <form method="post" action="{{ route('schedule.notes.update', $this_week->id) }}">
+    <div class="bs-callout bs-callout-success" v-if="assignment.user">
+        <form method="post" action="#" v-on:submit="updateAssignment">
             <input type="hidden" name="_method" value="put">
 
-            @if ($this_week->user->id == $current_user->id)
-                <h1>Ovaj tjedan ti voziš!</h1>
-            @else
-                <h4>Ovaj tjedan vozi:</h4>
-                <h1>{{ $this_week->user->nickname }}</h1>
-            @endif
+            <h4>Ovaj tjedan vozi:</h4>
+            <h1>{{ assignment.user.nickname }}</h1>
 
-            <input type="text" class="form-control" name="notes" value="{{ $this_week->notes }}" placeholder="Ovdje možeš unijeti napomenu...">
+            <input type="text" class="form-control" name="notes" v-model="assignment.notes" placeholder="Ovdje možeš unijeti napomenu...">
         </form>
     </div>
 </template>
 
 <script>
-    export default {
-        ready() {
-            console.log('THIS WEEK Component ready.')
+module.exports = {
+    created: function() {
+        this.fetchThisWeek();
+    },
+
+    methods: {
+        fetchThisWeek: function() {
+            $.getJSON('api/schedule/this-week', function(assignment) {
+                this.assignment = assignment;
+            }.bind(this));
+        },
+        updateAssignment: function(event) {
+            this.$http.post('api/schedule/'+this.assignment.id, { '_method': 'put', 'notes': this.assignment.notes }).then(
+                function(data) {
+                    Alertify.log.success("Success notification");
+                }, function(data) {
+                    swal("Oops...", "Something went wrong!", "error");
+                }
+            );
+
+            event.preventDefault();
+        }
+    },
+
+    data: function() {
+        return {
+            assignment: { user: {} }
         }
     }
+}
 </script>
