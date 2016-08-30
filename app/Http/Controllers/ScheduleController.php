@@ -30,7 +30,7 @@ class ScheduleController extends Controller
 
         $assignment->update(['notes' => $request->input('notes')]);
 
-        $assignment->group->notify(new AssignmentNotesWereUpdated($assignment));
+        if ($request->input('notes')) $assignment->group->notify(new AssignmentNotesWereUpdated($assignment));
 
         return redirect()->route('home');
     }
