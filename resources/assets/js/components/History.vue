@@ -22,7 +22,7 @@ module.exports = {
          * @return {array}
          */
         fetchHistory: function() {
-            $.getJSON('api/schedule/history', function(assignments) {
+            $.getJSON('/api/schedule/history', function(assignments) {
                 this.assignments = assignments;
             }.bind(this));
         }

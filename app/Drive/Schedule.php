@@ -11,6 +11,7 @@ class Schedule extends EloquentRepository
     public $thisWeek;
     public $nextWeek;
     public $history;
+    public $upcoming;
     protected $data;
 
     /**
@@ -20,15 +21,17 @@ class Schedule extends EloquentRepository
      * @param Assignment $nextWeek
      * @param Collection $history
      */
-    public function __construct($thisWeek = null, $nextWeek = null, $history = null)
+    public function __construct($thisWeek = null, $nextWeek = null, $history = null, $upcoming = null)
     {
         $this->thisWeek = $thisWeek;
         $this->nextWeek = $nextWeek;
         $this->history  = $history;
+        $this->upcoming = $upcoming;
         $this->data     = [
             'this_week' => &$this->thisWeek,
             'next_week' => &$this->thisWeek,
             'history'   => &$this->history,
+            'upcoming'  => &$this->upcoming,
         ];
     }
 

@@ -6,7 +6,7 @@
             <h6>Slijedeći tjedan vozi:</h6>
             <h3>{{ assignment.user.nickname }}</h3>
 
-            <input type="text" class="form-control" name="notes" v-model="assignment.notes" placeholder="Ovdje možeš unijeti napomenu...">
+            <!-- <input type="text" class="form-control" name="notes" v-model="assignment.notes" placeholder="Ovdje možeš unijeti napomenu..."> -->
         </form>
     </div>
 </template>
@@ -19,17 +19,17 @@ module.exports = {
 
     methods: {
         fetchNextWeek: function() {
-            $.getJSON('api/schedule/next-week', function(assignment) {
+            $.getJSON('/api/schedule/next-week', function(assignment) {
                 this.assignment = assignment;
                 this.listen();
             }.bind(this));
         },
         updateAssignment: function(event) {
-            this.$http.post('api/schedule/'+this.assignment.id, { '_method': 'put', 'notes': this.assignment.notes }).then(
+            this.$http.post('/api/schedule/'+this.assignment.id, { '_method': 'put', 'notes': this.assignment.notes }).then(
                 function(data) {
-                    Alertify.log.success("Success notification");
+                    Alertify.log.success("Dodana napomena");
                 }, function(data) {
-                    swal("Oops...", "Something went wrong!", "error");
+                    swal("Oops...", "Nešto je pošlo po zlu!", "error");
                 }
             );
 

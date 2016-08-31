@@ -45,4 +45,16 @@ class ScheduleController extends Controller
                                      ->withNextWeek($schedule->nextWeek)
                                      ->withHistory($schedule->history);
     }
+
+    /**
+     * Edit the schedule for future assignments
+     *
+     * @return View
+     */
+    public function edit()
+    {
+        $schedule = $this->assignments->schedule();
+
+        return view('schedule.edit')->withSchedule($schedule);
+    }
 }

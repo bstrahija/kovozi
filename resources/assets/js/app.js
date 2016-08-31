@@ -23,6 +23,7 @@ Vue.component('example',   require('./components/Example.vue'));
 Vue.component('this-week', require('./components/ThisWeek.vue'));
 Vue.component('next-week', require('./components/NextWeek.vue'));
 Vue.component('history',   require('./components/History.vue'));
+Vue.component('schedule',  require('./components/Schedule.vue'));
 
 const app = new Vue({
     el: 'body'

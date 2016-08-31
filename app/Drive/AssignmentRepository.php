@@ -23,8 +23,9 @@ class AssignmentRepository extends EloquentRepository
         $history  = Assignment::with(['user', 'group'])->where('week', '<', $when->weekOfYear)->where('year', '<=', $when->year)->orderBy('year', 'desc')->orderBy('week', 'desc')->limit(10)->get();
         $thisWeek = Assignment::with(['user', 'group'])->where('week', $when->weekOfYear)->where('year', $when->year)->first();
         $nextWeek = Assignment::with(['user', 'group'])->where('week', $when->addWeeks(1)->weekOfYear)->where('year', $when->year)->first();
+        $upcoming = Assignment::with(['user', 'group'])->where('week', '>=', $when->weekOfYear)->where('year', '>=', $when->year)->orderBy('year', 'asc')->orderBy('week', 'asc')->limit(10)->get();
 
-        return new Schedule($thisWeek, $nextWeek, $history);
+        return new Schedule($thisWeek, $nextWeek, $history, $upcoming);
     }
 
     /**
@@ -61,6 +62,13 @@ class AssignmentRepository extends EloquentRepository
         return $nextWeek;
     }
 
+    /**
+     * History of assignments
+     *
+     * @param  integer   $count
+     * @param  DateTime  $when
+     * @return Collection
+     */
     public function history($count = 10, $when = null)
     {
         // Set date
@@ -68,6 +76,24 @@ class AssignmentRepository extends EloquentRepository
 
         // Get data
         $history  = Assignment::with(['user', 'group'])->where('week', '<', $when->weekOfYear)->where('year', '<=', $when->year)->orderBy('year', 'desc')->orderBy('week', 'desc')->limit($count)->get();
+
+        return $history;
+    }
+
+    /**
+     * Upcoming assignments
+     *
+     * @param  integer   $count
+     * @param  DateTime  $when
+     * @return Collection
+     */
+    public function upcoming($count = 10, $when = null)
+    {
+        // Set date
+        if ( ! $when) $when = Carbon::now();
+
+        // Get data
+        $history  = Assignment::with(['user', 'group'])->where('week', '>=', $when->weekOfYear)->where('year', '>=', $when->year)->orderBy('year', 'asc')->orderBy('week', 'asc')->limit($count)->get();
 
         return $history;
     }

@@ -7,10 +7,8 @@ use App\Drive\AssignmentRepository;
 use App\Drive\Assignment;
 use App\Drive\DriveGroup;
 use App\Http\Requests;
-use App\Notifications\WhoDrivesNextWeek;
-use App\Notifications\YouDriveNextWeek;
-use App\Notifications\AssignmentNotesWereUpdated;
 use App\Events\AssignmentNoteUpdated;
+use App\Events\AssignmentUserUpdated;
 use App\Users\User;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
@@ -84,20 +82,54 @@ class ScheduleController extends Controller
     }
 
     /**
+     * Upcoming assignments
+     *
+     * @return Response
+     */
+    public function upcoming()
+    {
+        $upcoming = $this->assignments->upcoming();
+
+        return Response::json($upcoming);
+    }
+
+    /**
+     * Users in main group
+     *
+     * @return Response
+     */
+    public function groupUsers()
+    {
+        return Response::json(\App\Users\User::where('main_group_id', 1)->get());
+    }
+
+    /**
      * Update assignment notes
      *
      * @param  integer  $assignmentId
      * @param  Request $request
      * @return Response
      */
-    public function updateNotes($assignmentId, Request $request)
+    public function update($assignmentId, Request $request)
     {
         // Find assignment and update the data
         $assignment = Assignment::find($assignmentId);
-        $assignment->update(['notes' => $request->input('notes')]);
 
-        // Trigger the event
-        event(new AssignmentNoteUpdated($assignment));
+        // Update notes
+        if ($request->has('notes')) {
+            $assignment->update(['notes' => $request->input('notes')]);
+
+            // Trigger the event
+            event(new AssignmentNoteUpdated($assignment));
+        }
+
+        // Update user
+        if ($request->has('user_id')) {
+            $assignment->update(['user_id' => $request->input('user_id')]);
+
+            // Trigger the event
+            event(new AssignmentUserUpdated($assignment));
+        }
 
         return Response::json($assignment);
     }
