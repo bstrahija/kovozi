@@ -20,6 +20,7 @@ class CreateDriveAssignmentTable extends Migration
             $table->integer('week')->index();
             $table->integer('year')->index();
             $table->text('notes')->nullable();
+            $table->integer('notifications_sent')->default(0)->index();
             $table->timestamps();
 
             // Foreign keys
