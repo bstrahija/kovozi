@@ -2,8 +2,11 @@
 
 namespace App\Users;
 
-use Auth, Hash;
+use App\Drive\DriveGroup;
+use App\Notifications\WhoDrivesNextWeek;
+use App\Notifications\YouDriveNextWeek;
 use App\Services\EloquentRepository;
+use Auth, Hash;
 use Laravel\Socialite\Two\User as SocialUser;
 
 class UserRepository extends EloquentRepository
@@ -54,5 +57,37 @@ class UserRepository extends EloquentRepository
         elseif ($provider == "github")   $user->update(['github_id'   => object_get($socialUser, 'id')]);
 
         return $user;
+    }
+
+    /**
+     * Send next week notifications for all users
+     *
+     * @return integer
+     */
+    public function sendNextWeekNotificationsForGroup($groupId)
+    {
+        $count = 0;
+        $group = DriveGroup::find($groupId);
+
+        // First we need next weeks assignment
+        $nextWeek = app('App\Drive\AssignmentRepository')->nextWeek();
+
+        // Send notifications to all users
+        if ($nextWeek and ! $nextWeek->notifications_sent) {
+            foreach ($group->members as $user) {
+                if ($nextWeek->user_id == $user->id) {
+                    $user->notify(new YouDriveNextWeek($nextWeek));
+                } else {
+                    $user->notify(new WhoDrivesNextWeek($nextWeek));
+                }
+
+                $count++;
+            }
+        }
+
+        // Mark that notifications were sent
+        $nextWeek->update(['notifications_sent' => 1]);
+
+        return $count;
     }
 }

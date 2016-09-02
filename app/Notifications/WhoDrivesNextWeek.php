@@ -2,26 +2,27 @@
 
 namespace App\Notifications;
 
-use App\Drive\DriveGroup;
+use App\Drive\Assignment;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
+use Illuminate\Notifications\Notification;
 
 class WhoDrivesNextWeek extends Notification
 {
     use Queueable;
 
-    protected $group;
+    protected $assignment;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(DriveGroup $group)
+    public function __construct(Assignment $assignment)
     {
-        $this->group = $group;
+        $this->assignment = $assignment;
     }
 
     /**
@@ -32,7 +33,21 @@ class WhoDrivesNextWeek extends Notification
      */
     public function via($notifiable)
     {
-        return ['slack'];
+        return $notifiable->slack_webhook_url ? ['slack'] : ['mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+                    ->subject('KoVozi slijedeći tjedan')
+                    ->line('Slijedeći tjedan vozi:')
+                    ->line($this->assignment->user->full_name);
     }
 
     /**
@@ -44,6 +59,6 @@ class WhoDrivesNextWeek extends Notification
     public function toSlack($notifiable)
     {
         return (new SlackMessage)
-                    ->content('Slijedeći tjedan vozi: ' . \App\Users\User::first()->full_name);
+                    ->content('Slijedeći tjedan vozi: ' . $this->assignment->user->full_name);
     }
 }

@@ -49,6 +49,11 @@ class User extends Authenticatable
         return $this->belongsTo(DriveGroup::class, 'main_group_id');
     }
 
+    public function routeNotificationForMail()
+    {
+        return $this->email;
+    }
+
     public function routeNotificationForSlack()
     {
         return $this->slack_webhook_url;

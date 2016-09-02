@@ -2,26 +2,28 @@
 
 namespace App\Notifications;
 
+use App\Drive\Assignment;
 use App\Users\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
+use Illuminate\Notifications\Notification;
 
 class YouDriveNextWeek extends Notification
 {
     use Queueable;
 
-    protected $user;
+    protected $assignment;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(Assignment $assignment)
     {
-        $this->user = $user;
+        $this->assignment = $assignment;
     }
 
     /**
@@ -32,7 +34,20 @@ class YouDriveNextWeek extends Notification
      */
     public function via($notifiable)
     {
-        return ['slack'];
+        return $notifiable->slack_webhook_url ? ['slack'] : ['mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+                    ->subject('KoVozi slijedeći tjedan')
+                    ->line('Samo podsjetnik da si slijedeći tjedan ti na redu za vožnju.');
     }
 
     /**

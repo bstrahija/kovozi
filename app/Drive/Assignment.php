@@ -10,7 +10,7 @@ class Assignment extends Model
 {
     protected $table = 'drive_assignments';
 
-    protected $fillable = ['user_id', 'week', 'year', 'notes'];
+    protected $fillable = ['user_id', 'week', 'year', 'notes', 'notifications_sent'];
 
     public function user()
     {
