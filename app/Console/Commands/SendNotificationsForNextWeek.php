@@ -40,6 +40,7 @@ class SendNotificationsForNextWeek extends Command
     public function handle()
     {
         $count = $this->users->sendNextWeekNotificationsForGroup(1);
+        \Log::debug("Sent out {$count} notifications.");
 
         $this->line("Sent out {$count} notifications.");
     }
