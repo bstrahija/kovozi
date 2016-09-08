@@ -20,6 +20,7 @@ require('./bootstrap');
  */
 
 Vue.component('example',   require('./components/Example.vue'));
+Vue.component('home',      require('./components/Home.vue'));
 Vue.component('this-week', require('./components/ThisWeek.vue'));
 Vue.component('next-week', require('./components/NextWeek.vue'));
 Vue.component('history',   require('./components/History.vue'));
