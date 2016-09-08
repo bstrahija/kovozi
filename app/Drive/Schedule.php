@@ -29,7 +29,7 @@ class Schedule extends EloquentRepository
         $this->upcoming = $upcoming;
         $this->data     = [
             'this_week' => &$this->thisWeek,
-            'next_week' => &$this->thisWeek,
+            'next_week' => &$this->nextWeek,
             'history'   => &$this->history,
             'upcoming'  => &$this->upcoming,
         ];
