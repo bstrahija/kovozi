@@ -2,7 +2,9 @@
 
 @section('main')
     <div class="centered">
-        <this-week></this-week>
+        <home></home>
+
+        {{-- <this-week></this-week>
 
         <hr>
 
@@ -10,6 +12,6 @@
 
         <hr>
 
-        <history></history>
+        <history></history> --}}
     </div>
 @stop
