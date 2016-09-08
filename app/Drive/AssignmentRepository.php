@@ -20,10 +20,10 @@ class AssignmentRepository extends EloquentRepository
         if ( ! $when) $when = Carbon::now();
 
         // Get data
-        $history  = Assignment::with(['user', 'group'])->where('week', '<', $when->weekOfYear)->where('year', '<=', $when->year)->orderBy('year', 'desc')->orderBy('week', 'desc')->limit(10)->get();
         $thisWeek = Assignment::with(['user', 'group'])->where('week', $when->weekOfYear)->where('year', $when->year)->first();
-        $nextWeek = Assignment::with(['user', 'group'])->where('week', $when->addWeeks(1)->weekOfYear)->where('year', $when->year)->first();
+        $nextWeek = Assignment::with(['user', 'group'])->where('week', $when->copy()->addWeeks(1)->weekOfYear)->where('year', $when->copy()->addWeeks(1)->year)->first();
         $upcoming = Assignment::with(['user', 'group'])->where('week', '>=', $when->weekOfYear)->where('year', '>=', $when->year)->orderBy('year', 'asc')->orderBy('week', 'asc')->limit(10)->get();
+        $history  = Assignment::with(['user', 'group'])->where('week', '<', $when->weekOfYear)->where('year', '<=', $when->year)->orderBy('year', 'desc')->orderBy('week', 'desc')->limit(10)->get();
 
         return new Schedule($thisWeek, $nextWeek, $history, $upcoming);
     }

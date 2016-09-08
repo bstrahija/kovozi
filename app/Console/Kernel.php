@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // Run once per week on Monday at 1 PM...
+        // Run once per week on Sunday at 5 PM...
         $schedule->command('notify:next-week')
                  ->weekly()->sundays()->at('17:00')
                  // ->everyFiveMinutes()
